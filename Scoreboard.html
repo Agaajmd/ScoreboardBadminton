@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Badminton Scoreboard</title>
+    <link rel="stylesheet" href="Sb.css">
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="scoreboard">
+        <div class="title">Scoreboard Badminton</div>
+        <div class="team" id="team1">
+          <div class="team-name-input">
+            <input
+              type="text"
+              id="team1-name"
+              placeholder="Nama Tim 1"
+              oninput="updateTeamName('team1-name', 'team1-title')"
+            />
+          </div>
+          <h2 id="team1-title">Team 1</h2>
+          <div class="score" id="score1">0</div>
+          <div class="buttons">
+            <button class="increase" onclick="increaseScore('score1')">
+              +
+            </button>
+            <button class="decrease" onclick="decreaseScore('score1')">
+              -
+            </button>
+          </div>
+        </div>
+        <div class="team" id="team2">
+          <div class="team-name-input">
+            <input
+              type="text"
+              id="team2-name"
+              placeholder="Nama Tim 2"
+              oninput="updateTeamName('team2-name', 'team2-title')"
+            />
+          </div>
+          <h2 id="team2-title">Team 2</h2>
+          <div class="score" id="score2">0</div>
+          <div class="buttons">
+            <button class="increase" onclick="increaseScore('score2')">
+              +
+            </button>
+            <button class="decrease" onclick="decreaseScore('score2')">
+              -
+            </button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="winner-card" id="winner-card"></div>
+        <div class="rounds-card" id="rounds-card">
+          <div>Jumlah Babak: <span id="rounds-count">0</span></div>
+          <div>Pemenang:</div>
+          <ul id="winners-list"></ul>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let roundsCount = 0;
+      let winnersList = [];
+
+      function increaseScore(team) {
+        let score = document.getElementById(team);
+        score.innerText = parseInt(score.innerText) + 1;
+        checkWinner();
+      }
+
+      function decreaseScore(team) {
+        let score = document.getElementById(team);
+        if (parseInt(score.innerText) > 0) {
+          score.innerText = parseInt(score.innerText) - 1;
+        }
+        checkWinner();
+      }
+
+      function updateTeamName(inputId, titleId) {
+        let input = document.getElementById(inputId);
+        let title = document.getElementById(titleId);
+        title.innerText =
+          input.value || "Team " + titleId.charAt(titleId.length - 1);
+      }
+
+      function checkWinner() {
+        let score1 = parseInt(document.getElementById("score1").innerText);
+        let score2 = parseInt(document.getElementById("score2").innerText);
+        let winnerCard = document.getElementById("winner-card");
+
+        if (score1 >= 30 || (score1 >= 21 && score1 - score2 >= 2)) {
+          declareWinner(document.getElementById("team1-title").innerText);
+        } else if (score2 >= 30 || (score2 >= 21 && score2 - score1 >= 2)) {
+          declareWinner(document.getElementById("team2-title").innerText);
+        } else {
+          winnerCard.innerText = "";
+        }
+      }
+
+      function declareWinner(winner) {
+        let winnerCard = document.getElementById("winner-card");
+        winnerCard.innerText = winner + " Menang!";
+        roundsCount++;
+        winnersList.push(winner);
+        updateRoundsCard();
+        resetScores();
+      }
+
+      function resetScores() {
+        document.getElementById("score1").innerText = "0";
+        document.getElementById("score2").innerText = "0";
+      }
+
+      function updateRoundsCard() {
+        document.getElementById("rounds-count").innerText = roundsCount;
+        let winnersListElement = document.getElementById("winners-list");
+        winnersListElement.innerHTML = "";
+        winnersList.forEach((winner, index) => {
+          let listItem = document.createElement("li");
+          listItem.innerText = "Babak " + (index + 1) + ": " + winner;
+          winnersListElement.appendChild(listItem);
+        });
+      }
+    </script>
+  </body>
+</html>
